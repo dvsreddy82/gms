@@ -6,106 +6,36 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from .models import Device,DeviceType
-from .serializers import DeviceSerializer,DeviceTypeSerializer
+from .serializers import DeviceSerializer,DeviceTypeSerializer, UserSerializer, GroupSerializer
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
 
-class JSONResponse(HttpResponse):
+class UserViewSet(viewsets.ModelViewSet):
     """
-    An HttpResponse that renders its content into JSON.
+    API endpoint that allows users to be viewed or edited.
     """
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
 
 
-@csrf_exempt
-def device_list(request):
+class GroupViewSet(viewsets.ModelViewSet):
     """
-    List all code snippets, or create a new snippet.
+    API endpoint that allows groups to be viewed or edited.
     """
-    if request.method == 'GET':
-        devices = Device.objects.all()
-        serializer = DeviceSerializer(devices, many=True)
-        return JSONResponse(serializer.data)
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = DeviceSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JSONResponse(serializer.data, status=201)
-        return JSONResponse(serializer.errors, status=400)
-
-
-@csrf_exempt
-def deviceType_list(request):
+class DeviceViewSet(viewsets.ModelViewSet):
     """
-    List all code snippets, or create a new snippet.
+    API endpoint that allows users to be viewed or edited.
     """
-    if request.method == 'GET':
-        deviceTypes = DeviceType.objects.all()
-        serializer = DeviceTypeSerializer(deviceTypes, many=True)
-        return JSONResponse(serializer.data)
+    queryset = Device.objects.all()
+    serializer_class = DeviceSerializer
 
-    elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = DeviceTypeSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JSONResponse(serializer.data, status=201)
-        return JSONResponse(serializer.errors, status=400)
-
-
-@csrf_exempt
-def deviceType_detail(request, pk):
+class DeviceTypeViewSet(viewsets.ModelViewSet):
     """
-    Retrieve, update or delete a code snippet.
+    API endpoint that allows users to be viewed or edited.
     """
-    try:
-        deviceType = DeviceType.objects.get(pk=pk)
-    except DeviceType.DoesNotExist:
-        return HttpResponse(status=404)
-
-    if request.method == 'GET':
-        serializer = DeviceTypeSerializer(deviceType)
-        return JSONResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = DeviceTypeSerializer(deviceType, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JSONResponse(serializer.data)
-        return JSONResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        deviceType.delete()
-        return HttpResponse(status=204)
-
-
-@csrf_exempt
-def device_detail(request, pk):
-    """
-    Retrieve, update or delete a code snippet.
-    """
-    try:
-        device = Device.objects.get(pk=pk)
-    except DeviceType.DoesNotExist:
-        return HttpResponse(status=404)
-
-    if request.method == 'GET':
-        serializer = DeviceSerializer(device)
-        return JSONResponse(serializer.data)
-
-    elif request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = DeviceSerializer(device, data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JSONResponse(serializer.data)
-        return JSONResponse(serializer.errors, status=400)
-
-    elif request.method == 'DELETE':
-        device.delete()
-        return HttpResponse(status=204)
+    queryset = DeviceType.objects.all()
+    serializer_class = DeviceTypeSerializer
