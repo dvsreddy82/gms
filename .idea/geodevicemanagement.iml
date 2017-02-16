@@ -7,9 +7,11 @@
     <orderEntry type="library" name="Django Lib" level="project" />
   </component>
   <component name="TemplatesService">
+    <option name="TEMPLATE_CONFIGURATION" value="Django" />
     <option name="TEMPLATE_FOLDERS">
       <list>
         <option value="$MODULE_DIR$/lib/python2.7/site-packages/rest_framework/templates" />
+        <option value="$MODULE_DIR$/device/templates" />
       </list>
     </option>
   </component>
